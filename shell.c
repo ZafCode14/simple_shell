@@ -1,5 +1,22 @@
-#include "main.h"
+#include "shell.h"
+/**
+ * builtin_env - Prints the current environment
+ *
+ * Return: Always returns 0
+ */
+int builtin_env(void)
+{
+	extern char **environ;
+	int i;
 
+	for (i = 0; environ[i] != NULL; i++)
+	{
+		write(STDOUT_FILENO, environ[i], _strlen(environ[i]));
+		write(STDOUT_FILENO, "\n", 1);
+	}
+
+	return (0);
+}
 /**
  * command_handle - handles the command
  * @input: pointer to the input string
@@ -56,21 +73,20 @@ void handle_interactive_mode(char *av[])
 
 	while (1)
 	{
-		printf("$ ");
+		write(STDOUT_FILENO, "$ ", 2);
 		read_len = getline(&input, &input_len, stdin);
 
 		if (read_len == -1)
 		{
 			printf("\n");
+			free(input);
 			exit(EXIT_FAILURE);
 		}
 
-		if (strcmp(input, "exit\n") == 0)
-		{
-			free(input);
+		if (_strcmp(input, "exit\n") == 0)
 			exit(EXIT_SUCCESS);
-		}
-
+		if (_strcmp(input, "env\n") == 0)
+			builtin_env();
 		if (read_len > 0 && input[read_len - 1] == '\n')
 			input[read_len - 1] = '\0';
 
@@ -88,24 +104,23 @@ void handle_interactive_mode(char *av[])
 void handle_non_interactive_mode(char *av[])
 {
 	char *input = NULL;
-	size_t buffer_size = 1024;
+	size_t input_len = 0;
 	ssize_t read_len;
 
-	input = (char *)malloc(buffer_size);
+	input = (char *)malloc(input_len);
 	if (!input)
 	{
 		perror("malloc");
+		free(input);
 		exit(EXIT_FAILURE);
 	}
-
-	while ((read_len = getline(&input, &buffer_size, stdin)) != -1)
+	while ((read_len = getline(&input, &input_len, stdin)) != -1)
 	{
 		if (read_len > 0 && input[read_len - 1] == '\n')
 			input[read_len - 1] = '\0';
 
 		command_handle(input, av);
 	}
-
 	free(input);
 }
 
