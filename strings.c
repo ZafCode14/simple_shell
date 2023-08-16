@@ -34,3 +34,47 @@ int _strlen(char *s)
 	}
 	return (len);
 }
+/**
+ * _strncmp - Compare at most n characters of two strings
+ * @s1: First string
+ * @s2: Second string
+ * @n: Maximum number of characters to compare
+ *
+ * Return: An integer less than, equal to, or greater than zero
+ * if the first n bytes of s1 are respectively less than, equal to,
+ * or greater than the first n bytes of s2.
+ */
+int _strncmp(const char *s1, const char *s2, size_t n)
+{
+	while (n > 0 && *s1 && *s2 && (*s1 == *s2))
+	{
+		s1++;
+		s2++;
+		n--;
+	}
+
+	if (n == 0)
+		return (0);
+
+	return (*(unsigned char *)s1 - *(unsigned char *)s2);
+}
+/**
+ * _strcpy - copy string
+ * @dest: pointer to dest
+ * @src: pointer to src
+ * Return: pointer to dest
+ */
+char *_strcpy(char *dest, char *src)
+{
+	int len = 0;
+	int i;
+
+	while (src[len] != '\0')
+		len++;
+	len++;
+	for (i = 0; i < len; i++)
+	{
+		dest[i] = src[i];
+	}
+	return (dest);
+}
