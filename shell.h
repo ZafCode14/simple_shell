@@ -26,16 +26,29 @@ typedef struct node
 	struct node *next;
 } list_t;
 
+/* shell.c */
+int main(void);
+void handle_interactive_mode(void);
+void handle_non_interactive_mode(void);
+
+/* handlers.c */
+void command_handle(char *input, list_t *head);
+void handle_builtins(char *input, list_t *head);
+void search_command(char *input, char *argv[], list_t *head);
+void found(char *input, char *argv[], list_t *head, char *path);
+void full_path_command(char *input, char *argv[], list_t *head);
+
+/* linked.c */
 list_t *linked_dirs(char *var, list_t **head);
 void free_list(list_t *head);
-size_t print_list(const list_t *h);
 
-char *_getenv(const char *name);
-void command_handle(char *input, list_t *head);
-
+/* strings.c */
 int _strcmp(char *s1, char *s2);
 int _strlen(char *s);
 int _strncmp(const char *s1, const char *s2, size_t n);
 char *_strcpy(char *dest, char *src);
+
+/* getenv.c */
+char *_getenv(const char *name);
 
 #endif /* SHELL_H */

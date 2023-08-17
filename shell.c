@@ -1,4 +1,22 @@
 #include "shell.h"
+
+/**
+ * main - entry point
+ *
+ * Return: 0
+ */
+int main(void)
+{
+	int interactive = isatty(STDIN_FILENO);
+
+	if (interactive)
+		handle_interactive_mode();
+	else
+		handle_non_interactive_mode();
+
+	return (0);
+}
+
 /**
  * handle_interactive_mode - Handles the interactive mode of the shell
  *
@@ -19,16 +37,12 @@ void handle_interactive_mode(void)
 
 		if (read_len == -1)
 		{
-			printf("\n");
+			write(1, "\n", 1);
 			free(input);
+			free_list(head);
 			exit(EXIT_FAILURE);
 		}
 
-		if (_strcmp(input, "exit\n") == 0)
-		{
-			free(input);
-			exit(EXIT_SUCCESS);
-		}
 		if (read_len > 0 && input[read_len - 1] == '\n')
 			input[read_len - 1] = '\0';
 
@@ -55,6 +69,7 @@ void handle_non_interactive_mode(void)
 	if (!input)
 	{
 		perror("malloc");
+		free_list(head);
 		free(input);
 		exit(EXIT_FAILURE);
 	}
@@ -69,19 +84,3 @@ void handle_non_interactive_mode(void)
 	free(input);
 }
 
-/**
- * main - entry point
- *
- * Return: 0
- */
-int main(void)
-{
-	int interactive = isatty(STDIN_FILENO);
-
-	if (interactive)
-		handle_interactive_mode();
-	else
-		handle_non_interactive_mode();
-
-	return (0);
-}
