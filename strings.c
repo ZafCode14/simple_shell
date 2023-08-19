@@ -1,5 +1,52 @@
 #include "shell.h"
 /**
+ * _atoi - from character to integer
+ * @s: pointer to string
+ * Return: result
+ */
+int _atoi(char *s)
+{
+	unsigned int digit;
+	unsigned int sign = 1;
+	unsigned int result = 0;
+
+	while (*s != '\0')
+	{
+		if (*s == '-')
+			sign *= -1;
+		else if (*s >= '0' && *s <= '9')
+		{
+			digit = *s - '0';
+			result = result * 10 + digit;
+		}
+		else if (result > 0)
+			break;
+		s++;
+	}
+	return (sign * result);
+}
+/**
+ * _strcat - concat two strings
+ * @dest: pointer to first string
+ * @src: pointer to second string
+ * Return: result
+ */
+char *_strcat(char *dest, char *src)
+{
+	char *result = dest;
+
+	while (*dest != '\0')
+		dest++;
+	while (*src != '\0')
+	{
+		*dest = *src;
+		dest++;
+		src++;
+	}
+	*dest = '\0';
+	return (result);
+}
+/**
  * _strcmp - comparing two strings
  * @s1: pointer to first string
  * @s2: pointer to second string

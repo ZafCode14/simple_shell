@@ -33,10 +33,9 @@ void handle_non_interactive_mode(void);
 
 /* handlers.c */
 void command_handle(char *input, list_t *head);
-void handle_builtins(char *input, list_t *head);
+void handle_builtins(char *input, char *argv[], int len, list_t *head);
 void search_command(char *input, char *argv[], list_t *head);
 void found(char *input, char *argv[], list_t *head, char *path);
-void full_path_command(char *input, char *argv[], list_t *head);
 
 /* linked.c */
 list_t *linked_dirs(char *var, list_t **head);
@@ -47,6 +46,8 @@ int _strcmp(char *s1, char *s2);
 int _strlen(char *s);
 int _strncmp(const char *s1, const char *s2, size_t n);
 char *_strcpy(char *dest, char *src);
+char *_strcat(char *dest, char *src);
+int _atoi(char *s);
 
 /* getenv.c */
 char *_getenv(const char *name);

@@ -49,7 +49,6 @@ void handle_interactive_mode(void)
 		command_handle(input, head);
 	}
 	free_list(head);
-	free(input);
 }
 
 /**
@@ -81,6 +80,5 @@ void handle_non_interactive_mode(void)
 		command_handle(input, head);
 	}
 	free_list(head);
-	free(input);
 }
 

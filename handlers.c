@@ -9,7 +9,6 @@
  */
 void command_handle(char *input, list_t *head)
 {
-	struct stat st;
 	int i;
 	char *delim = " ", *token, *argv[20] = {NULL};
 
@@ -22,12 +21,9 @@ void command_handle(char *input, list_t *head)
 			token = strtok(NULL, delim);
 		}
 
-		handle_builtins(input, head);
+		handle_builtins(input, argv, i, head);
 
-		if (stat(argv[0], &st) == 0)
-			full_path_command(input, argv, head);
-		else
-			search_command(input, argv, head);
+		search_command(input, argv, head);
 	}
 }
 
@@ -38,59 +34,22 @@ void command_handle(char *input, list_t *head)
  *
  * Return: void
  */
-void handle_builtins(char *input, list_t *head)
+void handle_builtins(char *input, char *argv[], int len, list_t *head)
 {
-	int j = 0;
-
-	if (_strcmp(input, "exit") == 0)
+	if (_strcmp(argv[0], "exit") == 0 && len == 1)
 	{
 		free(input);
 		free_list(head);
 		exit(EXIT_SUCCESS);
 	}
-
-	if (_strcmp(input, "env") == 0)
+	else if (_strcmp(argv[0], "exit") == 0 && len == 2)
 	{
-		while (environ[j] != NULL)
-		{
-			printf("%s\n", environ[j]);
-			j++;
-		}
-	}
-}
+		int exit_status = _atoi(argv[1]);
 
-/**
- * full_path_command - executes when the full path of the command is passed
- * @input: pointer to the inputed command
- * @head: pointer to the head of linked list of PATH directories
- * @argv: pointer to an array of string
- *
- * Return: void
- */
-void full_path_command(char *input, char *argv[], list_t *head)
-{
-	pid_t pid;
-
-	pid = fork();
-	if (pid == -1)
-	{
-		perror("fork");
 		free(input);
 		free_list(head);
-		exit(EXIT_FAILURE);
+		exit(exit_status);
 	}
-	if (pid == 0)
-	{
-		if (execve(argv[0], argv, NULL) == -1)
-		{
-			perror("execve");
-			free(input);
-			free_list(head);
-			exit(EXIT_FAILURE);
-		}
-	}
-	else
-		wait(NULL);
 }
 
 /**
@@ -108,23 +67,30 @@ void search_command(char *input, char *argv[], list_t *head)
 	char path[BUFFER_SIZE];
 	list_t *temp = head;
 
-	while (temp)
+	if (stat(argv[0], &st) == 0)
 	{
-		strcpy(path, temp->dir);
-		strcat(path, "/");
-		strcat(path, argv[0]);
-		if (stat(path, &st) == 0)
+		_strcpy(path, argv[0]);
+		command_found = 1;
+	}
+	else
+	{
+		while (temp)
 		{
-			command_found = 1;
-			break;
+			_strcpy(path, temp->dir);
+			_strcat(path, "/");
+			_strcat(path, argv[0]);
+			if (stat(path, &st) == 0)
+			{
+				command_found = 1;
+				break;
+			}
+			temp = temp->next;
 		}
-		path[0] = '\0';
-		temp = temp->next;
 	}
 	if (command_found)
 		found(input, argv, head, path);
 	else if (!command_found)
-		printf("%s: command not found\n", argv[0]);
+		perror(argv[0]);
 }
 
 /**
@@ -150,7 +116,7 @@ void found(char *input, char *argv[], list_t *head, char *path)
 	}
 	if (pid == 0)
 	{
-		if (execve(path, argv, NULL) == -1)
+		if (execve(path, argv, environ) == -1)
 		{
 			perror("execve");
 			free(input);
