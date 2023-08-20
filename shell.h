@@ -25,6 +25,7 @@ typedef struct node
 	char *dir;
 	struct node *next;
 } list_t;
+list_t *dir_h;
 
 /* shell.c */
 int main(void);
@@ -32,14 +33,18 @@ void handle_interactive_mode(void);
 void handle_non_interactive_mode(void);
 
 /* handlers.c */
-void command_handle(char *input, list_t *head);
-void handle_builtins(char *input, char *argv[], int len, list_t *head);
-void search_command(char *input, char *argv[], list_t *head);
-void found(char *input, char *argv[], list_t *head, char *path);
+void command_handle(char *input);
+void handle_builtins(char *input, char *argv[], int len);
+void search_command(char *input, char *argv[]);
+void found(char *input, char *argv[], char *path);
+
+/* env.c */
+int _setenv(const char *name, const char *value, int overwrite);
+int _unsetenv(const char *name);
 
 /* linked.c */
-list_t *linked_dirs(char *var, list_t **head);
-void free_list(list_t *head);
+list_t *linked_dirs(char *var);
+void free_dirs(void);
 
 /* strings.c */
 int _strcmp(char *s1, char *s2);

@@ -3,11 +3,10 @@
 /**
  * linked_dirs - creates a linked list
  * @var: pointer to the variable in the environment
- * @head: pointer to pointer to the head node
  *
  * Return: pointer to the head node
  */
-list_t *linked_dirs(char *var, list_t **head)
+list_t *linked_dirs(char *var)
 {
 	char *value = getenv(var);
 	char *delim = ":";
@@ -31,9 +30,9 @@ list_t *linked_dirs(char *var, list_t **head)
 
 		new->next = NULL;
 
-		if (*head == NULL)
+		if (dir_h == NULL)
 		{
-			*head = new;
+			dir_h = new;
 			tail = new;
 		}
 		else
@@ -44,18 +43,17 @@ list_t *linked_dirs(char *var, list_t **head)
 
 		token = strtok(NULL, delim);
 	}
-	return (*head);
+	return (dir_h);
 }
 
 /**
- * free_list - frees a linked list
- * @head: pointer to the head node
+ * free_dirs - frees a linked list
  *
  * Return: void
  */
-void free_list(list_t *head)
+void free_dirs(void)
 {
-	list_t *current = head;
+	list_t *current = dir_h;
 	list_t *next;
 
 	while (current != NULL)
