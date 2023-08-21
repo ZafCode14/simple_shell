@@ -8,24 +8,25 @@
 int main(void)
 {
 	int interactive = isatty(STDIN_FILENO);
+	dir_t *dir_h = NULL;
 
-	dir_h = NULL;
-	linked_dirs("PATH");
+	linked_dirs("PATH", &dir_h);
 	if (interactive)
-		handle_interactive_mode();
+		handle_interactive_mode(dir_h);
 	else
-		handle_non_interactive_mode();
-	free_dirs();
+		handle_non_interactive_mode(dir_h);
+	free_dirs(dir_h);
 
 	return (0);
 }
 
 /**
  * handle_interactive_mode - Handles the interactive mode of the shell
+ * @dir_h: pointer to head node of PATH directories
  *
  * Return: None
  */
-void handle_interactive_mode(void)
+void handle_interactive_mode(dir_t *dir_h)
 {
 	char *input = NULL;
 	size_t input_len = 0;
@@ -40,23 +41,24 @@ void handle_interactive_mode(void)
 		{
 			write(1, "\n", 1);
 			free(input);
-			free_dirs();
+			free_dirs(dir_h);
 			exit(EXIT_FAILURE);
 		}
 
 		if (read_len > 0 && input[read_len - 1] == '\n')
 			input[read_len - 1] = '\0';
 
-		command_handle(input);
+		command_handle(input, dir_h);
 	}
 }
 
 /**
  * handle_non_interactive_mode - Handles the non-interactive mode of the shell
+ * @dir_h: pointer to head node of PATH directories
  *
  * Return: None
  */
-void handle_non_interactive_mode(void)
+void handle_non_interactive_mode(dir_t *dir_h)
 {
 	char *input = NULL;
 	size_t input_len = 0;
@@ -67,7 +69,7 @@ void handle_non_interactive_mode(void)
 	{
 		perror("malloc");
 		free(input);
-		free_dirs();
+		free_dirs(dir_h);
 		exit(EXIT_FAILURE);
 	}
 	while ((read_len = getline(&input, &input_len, stdin)) != -1)
@@ -75,6 +77,6 @@ void handle_non_interactive_mode(void)
 		if (read_len > 0 && input[read_len - 1] == '\n')
 			input[read_len - 1] = '\0';
 
-		command_handle(input);
+		command_handle(input, dir_h);
 	}
 }

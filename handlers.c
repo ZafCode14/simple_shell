@@ -3,10 +3,11 @@
 /**
  * command_handle - handles the command
  * @input: pointer to the input string
+ * @dir_h: pointer to head node of PATH directories
  *
  * Return: void
  */
-void command_handle(char *input)
+void command_handle(char *input, dir_t *dir_h)
 {
 	int i;
 	char *delim = " ", *token, *argv[BUFFER_SIZE] = {NULL};
@@ -19,8 +20,8 @@ void command_handle(char *input)
 			argv[i] = token;
 			token = strtok(NULL, delim);
 		}
-		handle_builtins(input, argv, i);
-		search_command(input, argv);
+		handle_builtins(input, argv, i, dir_h);
+		search_command(input, argv, dir_h);
 	}
 }
 
@@ -29,63 +30,31 @@ void command_handle(char *input)
  * @argv: pointer to an array of input strings
  * @len: number of arguments in the array of strings
  * @input: pointer to the input command
+ * @dir_h: pointer to head node of PATH directories
  *
  * Return: void
  */
-void handle_builtins(char *input, char *argv[], int len)
+void handle_builtins(char *input, char *argv[], int len, dir_t *dir_h)
 {
-	char *err_senv = "Usage: setenv VARIABLE VALUE\n";
-	char *err_usenv = "Usage: setenv VARIABLE\n";
-
-	if (_strcmp(argv[0], "exit") == 0 && len == 1)
-	{
-		free(input);
-		free_dirs();
-		exit(EXIT_SUCCESS);
-	}
-	else if (_strcmp(argv[0], "exit") == 0 && len == 2)
-	{
-		int exit_status = _atoi(argv[1]);
-
-		free(input);
-		free_dirs();
-		exit(exit_status);
-	}
-	if (_strcmp(input, "env") == 0)
-	{
-		int i = 0;
-
-		while (environ[i])
-		{
-			write(STDOUT_FILENO, environ[i], _strlen(environ[i]));
-			write(STDOUT_FILENO, "\n", 1);
-			i++;
-		}
-	}
-	if (_strcmp(argv[0], "setenv") == 0 && len == 3)
-		_setenv(argv[1], argv[2], 1);
-	else if (_strcmp(argv[0], "setenv") == 0 && len != 3)
-		write(STDERR_FILENO, err_senv, _strlen(err_senv));
-
-	if (_strcmp(argv[0], "unsetenv") == 0 && len == 2)
-		_unsetenv(argv[1]);
-	else if (_strcmp(argv[0], "unsetenv") == 0 && len != 2)
-		write(STDERR_FILENO, err_usenv, _strlen(err_usenv));
+	exit_b(input, argv, len, dir_h);
+	cd_b(argv, len);
+	env_b(input, argv, len);
 }
 
 /**
  * search_command - searches for the command in the PATH directories
  * @input: pointer to the inputed command
  * @argv: pointer to an array of strings
+ * @dir_h: pointer to head node of PATH directories
  *
  * Return: void
  */
-void search_command(char *input, char *argv[])
+void search_command(char *input, char *argv[], dir_t *dir_h)
 {
 	struct stat st;
 	int command_found = 0, builtin_found = 0;
 	char path[BUFFER_SIZE];
-	list_t *temp = dir_h;
+	dir_t *temp = dir_h;
 
 	if (
 	_strcmp(argv[0], "env") == 0 || _strcmp(argv[0], "setenv") == 0 ||
@@ -115,7 +84,7 @@ void search_command(char *input, char *argv[])
 	if (builtin_found)
 		return;
 	else if (command_found)
-		found(input, argv, path);
+		found(input, argv, path, dir_h);
 	else if (!command_found)
 	{
 		char *err = _strcat(argv[0], ": command not found\n");
@@ -129,10 +98,11 @@ void search_command(char *input, char *argv[])
  * @input: pointer to the inputed command
  * @argv: pointer to an array of string
  * @path: pointer to the path where the command is found
+ * @dir_h: pointer to head node of PATH directories
  *
  * Return: void
  */
-void found(char *input, char *argv[], char *path)
+void found(char *input, char *argv[], char *path, dir_t *dir_h)
 {
 	pid_t pid;
 
@@ -141,7 +111,7 @@ void found(char *input, char *argv[], char *path)
 	{
 		perror("fork");
 		free(input);
-		free_dirs();
+		free_dirs(dir_h);
 		exit(EXIT_FAILURE);
 	}
 	if (pid == 0)
@@ -150,7 +120,7 @@ void found(char *input, char *argv[], char *path)
 		{
 			perror("execve");
 			free(input);
-			free_dirs();
+			free_dirs(dir_h);
 			exit(EXIT_FAILURE);
 		}
 	}
