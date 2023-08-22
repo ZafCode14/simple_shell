@@ -37,12 +37,14 @@ int _hnd_env(state_t *state)
 
 	if (node == NULL)
 	{
-		printf("str_head - nil\n");
 		return (-1);
 	}
 	while (node)
 	{
-		printf("%s=%s\n", node->key, node->value);
+		printf("%s=", node->key);
+		if (node->value)
+			printf("%s", node->value);
+		printf("\n");
 		node = node->next;
 	}
 	return (0);
