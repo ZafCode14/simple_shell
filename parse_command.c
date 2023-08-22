@@ -19,12 +19,12 @@ char **_parse_command(char *input, state_t *state)
 	int i = 0;
 
 	state->args = malloc(sizeof(char *) * BUFF_SIZE);
-
 	tokens = tokenize(input, delims);
-
 	/*handling aliass*/
 	if (tokens[0])
+	{
 		alias_value = (char *)_get_value(state->alias_head, tokens[0]->str);
+	}
 	if (alias_value)
 	{
 		tk_info_t **alias_tokens;
@@ -104,7 +104,7 @@ void _handle_variables(state_t *state)
 		}
 		else
 		{
-			if (state->args[k][0] == '$')
+			if (state->args[k][0] == '$' && state->args[k][1])
 			{
 				const char *value = NULL;
 
