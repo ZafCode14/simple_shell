@@ -1,0 +1,6 @@
+vgcore.*
+TEST_SUITE/* 
+allowed_functions
+runchecker.bash
+test/
+tmp/
