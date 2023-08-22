@@ -23,7 +23,8 @@ char **_parse_command(char *input, state_t *state)
 	tokens = tokenize(input, delims);
 
 	/*handling aliass*/
-	alias_value = (char *)_get_value(state->alias_head, tokens[0]->str);
+	if (tokens[0])
+		alias_value = (char *)_get_value(state->alias_head, tokens[0]->str);
 	if (alias_value)
 	{
 		tk_info_t **alias_tokens;
