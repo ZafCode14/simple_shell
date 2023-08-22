@@ -18,7 +18,6 @@ void _lanch_shell(state_t *state)
 		size = 0;
 		if (_getline(&input, &size, state->fd_input) <= 0)
 		{
-			_print_string(STDOUT_FILENO, "\n");
 			free(input);
 			_free_state(state);
 			exit(state->last_cmd_status);
