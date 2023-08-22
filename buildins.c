@@ -57,11 +57,8 @@ int _hnd_env(state_t *state)
  */
 int _hnd_setenv(state_t *state)
 {
-	if (state->args[1] == NULL)
+	if (state->args[1] == NULL || state->args[2] == NULL)
 	{
-		char *str = "Usage: setstr key [value]\n";
-
-		write(STDERR_FILENO, str, strlen(str));
 		return (-1);
 	}
 	if (_push_entry_node(&(state->env_head), state->args[1], state->args[2]) < 0)
