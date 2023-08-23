@@ -8,8 +8,7 @@
  */
 int _hnd_cd(state_t *state)
 {
-	char *path = NULL;
-	const char *prev_pwd = NULL;
+	char *path = NULL, *prev_pwd = NULL;
 
 	if (state->args[1] == NULL)
 	{
@@ -41,7 +40,7 @@ int _hnd_cd(state_t *state)
 			_print_string(STDOUT_FILENO, path);
 			_print_string(STDOUT_FILENO, "\n");
 		}
-		prev_pwd = _get_value(state->env_head, "PWD");
+		prev_pwd = (char *)_get_value(state->env_head, "PWD");
 		_push_entry_node(&(state->env_head), "OLDPWD", prev_pwd);
 		_push_entry_node(&(state->env_head), "PWD", path);
 		_free_env_table(*(state->environ));

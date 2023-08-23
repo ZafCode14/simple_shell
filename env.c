@@ -117,7 +117,7 @@ void _free_env_table(char **table)
 const char *_get_value(entry_node_t *head, const char *key)
 {
 	entry_node_t *node = NULL;
-	
+
 	if (key == NULL)
 		return (NULL);
 	node = _search_entry_list(head, key);

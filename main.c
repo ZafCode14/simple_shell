@@ -25,19 +25,18 @@ int main(int argc, char *argv[])
 	else if (argc == 2)
 	{
 		state.fd_input  = open(argv[1], O_RDONLY);
+		if (state.fd_input == -1)
+		{
+			_free_state(&state);
+			_print_string(STDERR_FILENO, SHELL_NAME);
+			_print_string(STDERR_FILENO, ": 0: ");
+			_print_string(STDERR_FILENO, ECANTOPEN_STRING);
+			_print_string(STDERR_FILENO, argv[1]);
+			_print_string(STDERR_FILENO, "\n");
+			exit(ENFOUND);
+		}
 	}
-	if (state.fd_input != -1)
-			_lanch_shell(&state);
-	else
-	{
-		_free_state(&state);
-		_print_string(STDERR_FILENO, SHELL_NAME);
-		_print_string(STDERR_FILENO, ": 0: ");
-		_print_string(STDERR_FILENO, ECANTOPEN_STRING);
-		_print_string(STDERR_FILENO, argv[1]);
-		_print_string(STDERR_FILENO, "\n");
-		exit(ENFOUND);
-	}
+	_lanch_shell(&state);
 	return (0);
 }
 /**
