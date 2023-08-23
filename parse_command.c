@@ -57,14 +57,22 @@ char **_parse_command(char *input, state_t *state)
  */
 void _cut_comments(char *input)
 {
-	while (*input != '\0')
+	int i = 0;
+
+	while (input[i] != '\0')
 	{
-		if (*input == '#')
+		if (i > 0 && input[i] == '#')
+			if (input[i - 1] != ' ' &&  input[i - 1] != '\t')
+			{
+				++i;
+				continue;
+			}
+		if (input[i] == '#')
 		{
-			*input = '\0';
+			input[i] = '\0';
 			return;
 		}
-		++input;
+		++i;
 	}
 }
 /**
