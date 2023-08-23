@@ -23,7 +23,10 @@ char **_parse_command(char *input, state_t *state)
 	/*handling aliass*/
 	if (tokens[0])
 	{
-		alias_value = (char *)_get_value(state->alias_head, tokens[0]->str);
+		char *potential = tokens[0]->str;
+
+		while ((potential = (char *)_get_value(state->alias_head, potential)))
+			alias_value = potential;
 	}
 	if (alias_value)
 	{
