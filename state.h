@@ -10,6 +10,7 @@
  * @args: args of the program
  * @running: running flag
  * @fd_input: the input of the shell
+ * @error_count: error count
  * @last_cmd_status: the status/ exit code of the last command
  * @pid: proccess id of the shell
  * @shell_name: shell name
@@ -24,6 +25,7 @@ typedef struct shell_state
 
 	int running;
 	int fd_input;
+	int error_count;
 
 	int last_cmd_status;
 	int pid;

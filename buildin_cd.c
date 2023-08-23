@@ -33,12 +33,12 @@ int _hnd_cd(state_t *state)
 			_print_string(STDERR_FILENO, ECANTCD_STRING);
 			_print_string(STDERR_FILENO, path);
 			_print_string(STDERR_FILENO, "\n");
-			return (0);
+			free(path);
+			return (CANTCD_E);
 		}
 		if (state->args[1] && strcmp(state->args[1], "-") == 0)
 		{
-			_print_string(STDOUT_FILENO, path);
-			_print_string(STDOUT_FILENO, "\n");
+			_print_string(STDOUT_FILENO, path), _print_string(STDOUT_FILENO, "\n");
 		}
 		prev_pwd = (char *)_get_value(state->env_head, "PWD");
 		_push_entry_node(&(state->env_head), "OLDPWD", prev_pwd);
